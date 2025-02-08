@@ -7,7 +7,7 @@ export default defineNitroConfig({
     "/**": {
       cors: true,
       headers: {
-        "Access-Control-Allow-Origin": "satooru.me",
+        "Access-Control-Allow-Origin": "https://satooru.me",
       },
     },
   },
