@@ -4,5 +4,5 @@ name = "api-satooru-me"
 command = "NITRO_PRESET=cloudflare pnpm build"
 
 [[kv_namespaces]]
-binding = "CACHE_KV"
+binding = "api_satooru_me"
 id = "9064352629184726b342083c58d1e1be"

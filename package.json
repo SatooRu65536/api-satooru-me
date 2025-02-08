@@ -2,10 +2,10 @@
   "private": true,
   "scripts": {
     "build": "nitro build",
-    "dev": "wrangler dev .output/server/index.mjs --assets .output/public/",
+    "dev": "nitro dev",
     "prepare": "nitro prepare",
     "preset": "cloudflare_pages",
-    "preview": "node .output/server/index.mjs"
+    "preview": "wrangler dev .output/server/index.mjs --assets .output/public/"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20250204.0",

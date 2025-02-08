@@ -1,4 +1,3 @@
-import { KVNamespace } from "@cloudflare/workers-types";
 import dayjs from "dayjs";
 import { ofetch } from "ofetch";
 import { GitHubEvent, GitHubRepo } from "~~/types";
@@ -10,8 +9,12 @@ export default defineEventHandler(async () => {
   const storage = useStorage<GitHubRepo[]>("kv");
 
   const cachedProjects = await storage.getItem(CACHE_KEY);
-  if (cachedProjects) return cachedProjects;
+  if (cachedProjects) {
+    console.log("Using cached projects");
+    return cachedProjects;
+  }
 
+  console.log("Fetching projects");
   const events = await ofetch<GitHubEvent[]>(
     "https://api.github.com/users/SatooRu65536/events",
     {
