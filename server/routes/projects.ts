@@ -15,13 +15,15 @@ export default defineEventHandler(async () => {
   }
 
   console.log("Fetching projects");
-  const events = await fetch("https://api.github.com/users/SatooRu65536/events")
-    .then((res) => {
-      console.log(res.text());
-      return res.json() as Promise<GitHubEvent[]>;
-    })
-    .then((events) => events)
-    .catch(() => []);
+  const events = await ofetch<GitHubEvent[]>(
+    "https://api.github.com/users/SatooRu65536/events",
+    {
+      parseResponse: JSON.parse,
+    },
+  ).catch((e) => {
+    console.error(e);
+    return [];
+  });
   console.log(events);
 
   const recentEventRepoUrls = events
