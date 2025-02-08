@@ -20,7 +20,11 @@ export default defineEventHandler(async () => {
     {
       parseResponse: JSON.parse,
     },
-  ).catch(() => []);
+  ).catch((e) => {
+    console.error(e);
+    return [];
+  });
+  console.log(events);
 
   const recentEventRepoUrls = events
     .filter(
