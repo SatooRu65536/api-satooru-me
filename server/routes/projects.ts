@@ -16,11 +16,10 @@ export default defineEventHandler(async () => {
 
   console.log("Fetching projects");
   const events = await fetch("https://api.github.com/users/SatooRu65536/events")
-    .then((res) => {
-      console.log(res.text());
-      return res.json() as Promise<GitHubEvent[]>;
+    .then(async (res) => {
+      console.log(await res.text());
+      return await res.json() as Promise<GitHubEvent[]>;
     })
-    .then((events) => events)
     .catch(() => []);
   console.log(events);
 
