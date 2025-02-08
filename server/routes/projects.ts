@@ -9,7 +9,7 @@ export default defineEventHandler(async () => {
   const storage = useStorage<GitHubRepo[]>("kv");
 
   const cachedProjects = await storage.getItem(CACHE_KEY);
-  if (cachedProjects) return cachedProjects;
+  // if (cachedProjects) return cachedProjects;
 
   const events = await ofetch<GitHubEvent[]>(
     "https://api.github.com/users/SatooRu65536/events",
@@ -21,7 +21,8 @@ export default defineEventHandler(async () => {
     console.error(e);
     return [];
   });
-  console.log(events);
+
+  console.log({ events });
 
   const recentEventRepoUrls = events
     .filter(
