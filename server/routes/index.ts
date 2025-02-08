@@ -1,3 +1,1 @@
-export default defineEventHandler((event) => {
-  return "Start by editing <code>server/routes/index.ts</code>.";
-});
+export default defineEventHandler((event) => "Welcome to the satooru.me!!");
