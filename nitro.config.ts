@@ -2,7 +2,7 @@
 export default defineNitroConfig({
   srcDir: "server",
   compatibilityDate: "2025-02-08",
-  preset: "cloudflare-module",
+  preset: "cloudflare-pages",
   storage: {
     kv: {
       driver: "cloudflare-kv-binding",

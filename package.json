@@ -4,7 +4,7 @@
     "build": "nitro build",
     "dev": "wrangler dev .output/server/index.mjs --assets .output/public/",
     "prepare": "nitro prepare",
-    "deploy": "wrangler deploy",
+    "preset": "cloudflare_pages",
     "preview": "node .output/server/index.mjs"
   },
   "devDependencies": {
