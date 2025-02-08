@@ -1,18 +1,23 @@
+import { KVNamespace } from "@cloudflare/workers-types";
 import dayjs from "dayjs";
 import { ofetch } from "ofetch";
 import { GitHubEvent, GitHubRepo } from "~~/types";
 
-const EVENTS_API_URL = import.meta.env.NITRO_GITHUB_EVENTS_API_URL;
-
+declare const CACHE_KV: KVNamespace;
 const IGNORE_EVENTS_TYPE = ["WatchEvent"];
-
-if (EVENTS_API_URL === undefined)
-  throw new Error("Missing env var NITRO_GITHUB_EVENTS_API_URL");
+const CACHE_KEY = "projects";
 
 export default defineEventHandler(async () => {
-  const events = await ofetch<GitHubEvent[]>(EVENTS_API_URL, {
-    parseResponse: JSON.parse,
-  }).catch(() => []);
+  const cache = await CACHE_KV.get(CACHE_KEY);
+
+  if (cache) return JSON.parse(cache);
+
+  const events = await ofetch<GitHubEvent[]>(
+    "https://api.github.com/users/SatooRu65536/events",
+    {
+      parseResponse: JSON.parse,
+    },
+  ).catch(() => []);
 
   const recentEventRepoUrls = events
     .filter(
@@ -24,7 +29,7 @@ export default defineEventHandler(async () => {
 
   const uniqueRepoUrls = Array.from(new Set(recentEventRepoUrls));
 
-  const projects = await Promise.all(
+  const projectsWithNull = await Promise.all(
     uniqueRepoUrls.map((url) =>
       ofetch<GitHubRepo>(url, { parseResponse: JSON.parse })
         .then((repo) => {
@@ -48,5 +53,10 @@ export default defineEventHandler(async () => {
     ),
   );
 
-  return projects.filter((p) => p !== undefined);
+  const projects = projectsWithNull.filter((p) => p !== undefined);
+  CACHE_KV.put(CACHE_KEY, JSON.stringify(projects), {
+    expirationTtl: 60 * 60, // 1 hour
+  });
+
+  return projects;
 });
