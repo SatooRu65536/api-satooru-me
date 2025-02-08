@@ -3,14 +3,14 @@ import dayjs from "dayjs";
 import { ofetch } from "ofetch";
 import { GitHubEvent, GitHubRepo } from "~~/types";
 
-declare const CACHE_KV: KVNamespace;
 const IGNORE_EVENTS_TYPE = ["WatchEvent"];
 const CACHE_KEY = "projects";
 
 export default defineEventHandler(async () => {
-  const cache = await CACHE_KV.get(CACHE_KEY);
+  const storage = useStorage<GitHubRepo[]>("kv");
 
-  if (cache) return JSON.parse(cache);
+  const cachedProjects = await storage.getItem(CACHE_KEY);
+  if (cachedProjects) return cachedProjects;
 
   const events = await ofetch<GitHubEvent[]>(
     "https://api.github.com/users/SatooRu65536/events",
@@ -29,7 +29,7 @@ export default defineEventHandler(async () => {
 
   const uniqueRepoUrls = Array.from(new Set(recentEventRepoUrls));
 
-  const projectsWithNull = await Promise.all(
+  const projectsWithNull: GitHubRepo[] = await Promise.all(
     uniqueRepoUrls.map((url) =>
       ofetch<GitHubRepo>(url, { parseResponse: JSON.parse })
         .then((repo) => {
@@ -54,8 +54,8 @@ export default defineEventHandler(async () => {
   );
 
   const projects = projectsWithNull.filter((p) => p !== undefined);
-  CACHE_KV.put(CACHE_KEY, JSON.stringify(projects), {
-    expirationTtl: 60 * 60, // 1 hour
+  await storage.setItem(CACHE_KEY, projects, {
+    expirationTtl: 60 * 60, // 1 day
   });
 
   return projects;
