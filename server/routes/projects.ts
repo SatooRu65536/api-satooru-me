@@ -22,8 +22,6 @@ export default defineEventHandler(async () => {
     return [];
   });
 
-  console.log({ events });
-
   const recentEventRepoUrls = events
     .filter(
       (event) =>
@@ -36,7 +34,10 @@ export default defineEventHandler(async () => {
 
   const projectsWithNull: GitHubRepo[] = await Promise.all(
     uniqueRepoUrls.map((url) =>
-      ofetch<GitHubRepo>(url, { parseResponse: JSON.parse })
+      ofetch<GitHubRepo>(url, {
+        headers: { "User-Agent": "SatooRu65536" },
+        parseResponse: JSON.parse,
+      })
         .then((repo) => {
           const tags = repo.topics.map((t) => t.toLowerCase());
 
