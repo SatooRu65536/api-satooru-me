@@ -9,15 +9,12 @@ export default defineEventHandler(async () => {
   const storage = useStorage<GitHubRepo[]>("kv");
 
   const cachedProjects = await storage.getItem(CACHE_KEY);
-  if (cachedProjects) {
-    console.log("Using cached projects");
-    return cachedProjects;
-  }
+  if (cachedProjects) return cachedProjects;
 
-  console.log("Fetching projects");
   const events = await ofetch<GitHubEvent[]>(
     "https://api.github.com/users/SatooRu65536/events",
     {
+      headers: { "User-Agent": "SatooRu65536" },
       parseResponse: JSON.parse,
     },
   ).catch((e) => {
