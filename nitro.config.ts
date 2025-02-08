@@ -3,6 +3,14 @@ export default defineNitroConfig({
   srcDir: "server",
   compatibilityDate: "2025-02-08",
   preset: "cloudflare-pages",
+  routeRules: {
+    "/**": {
+      cors: true,
+      headers: {
+        "Access-Control-Allow-Origin": "satooru.me",
+      },
+    },
+  },
   storage: {
     kv: {
       driver: "cloudflare-kv-binding",
